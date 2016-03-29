@@ -1,4 +1,5 @@
-# Adoption Kaggle Competition
+### Kaggle Adoption Competition
+### 0.71520 on public LB
 
 library(lubridate)
 library(stringr)
@@ -39,10 +40,12 @@ alldata$Pit <- ifelse(str_detect(alldata$Breed, "Pit")==T,1,0)
 alldata$UnsureBreed <- ifelse(str_detect(alldata$Breed, "/")==T,1,0)
 
 # extract hour, month,weekday, change time to posixct
-alldata$Hour <- hour(alldata$DateTime)
-alldata$Weekday <- wday(alldata$DateTime)
-alldata$Month <- month(alldata$DateTime)
-alldata$Year <- year(alldata$DateTime)
+dateExtractions <- list('hour','wday','month','year') 
+
+for(i in dateExtractions){
+    alldata[i] <- eval(parse(text=paste(i,"(alldata$DateTime)",sep="")))
+}
+
 alldata$DateTime <- as.numeric(as.POSIXct(alldata$DateTime)) 
 
 # name length, popular names, drop name
@@ -51,10 +54,18 @@ alldata$nameObscurity <- NameSummary[match(alldata$Name,names(NameSummary))]
 alldata$Name <- NULL
 
 # Change age
-alldata$AgeuponOutcome <- gsub(" years?","0000",alldata$AgeuponOutcome)
-alldata$AgeuponOutcome <- gsub(" months?","00",alldata$AgeuponOutcome)
-alldata$AgeuponOutcome <- gsub(" weeks?","0",alldata$AgeuponOutcome)
-alldata$AgeuponOutcome <- gsub(" days?","",alldata$AgeuponOutcome)
+multi_sub <- function(pattern, replacement, x, ...){
+    result <- x
+    for(i in 1:length(pattern)) {
+        result <- gsub(pattern[i], replacement[i], result, ...)
+    }
+    result
+}
+
+alldata$AgeuponOutcome <- multi_sub(c(" years?", " months?", " weeks?", " days?"), 
+                                    c("0000","00","0",""), 
+                                    alldata$AgeuponOutcome)
+
 alldata$AgeuponOutcome <- as.numeric(paste0("0",alldata$AgeuponOutcome))
 
 # dummy var of popular colors
