@@ -31,13 +31,13 @@ frequentBreeds <- names(summary(alldata$Breed,maxsum=20))
 NameSummary <- summary(alldata$Name,maxsum=Inf)
 
 # dummy var for mix breed
-alldata$Mix <- ifelse(str_detect(alldata$Breed, "Mix")==T,1,0)
+alldata$Mix <- ifelse(str_detect(alldata$Breed, "Mix"),1,0)
 
 # dummy var for Pit in name
-alldata$Pit <- ifelse(str_detect(alldata$Breed, "Pit")==T,1,0)
+alldata$Pit <- ifelse(str_detect(alldata$Breed, "Pit"),1,0)
 
 # dummy var for breeds with '/' in name
-alldata$UnsureBreed <- ifelse(str_detect(alldata$Breed, "/")==T,1,0)
+alldata$UnsureBreed <- ifelse(str_detect(alldata$Breed, "/"),1,0)
 
 # extract hour, month,weekday, change time to posixct
 dateExtractions <- list('hour','wday','month','year') 
